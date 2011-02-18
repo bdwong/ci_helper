@@ -5,6 +5,7 @@
 # t.interpolate_files_like("database.yml") # interpolate database.yml.tmpl into database.yml
 # t.interpolate_files_like("database.yml", "production") # interpolate database.yml.tmpl.production files into database.yml
 # t.with_directory("mydir").interpolate!("database.yml") # search "mydir" and deeper, interpolate "database.yml.tmpl" files
+# t.with_options('DATABASE' => 'resultdb')
 # No globbing in the source filename or it will mess up the output filename.
 # Searches current directory downward by default, or searches from @dir down, templating all files found.
 # Accepts options hash, or interpolates from environment.
