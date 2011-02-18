@@ -1,0 +1,43 @@
+#!/bin/bash -e
+# Test a rails project.
+
+# default variables
+export PROJECT_DIR=`pwd`
+export CI_BRANCH=${CI_BRANCH:-master}
+export CI_JOB=${CI_JOB:project}
+
+if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
+  echo "rvm is not installed correctly."
+  exit 1
+fi
+
+# Use the correct ruby
+#rvm use "1.9.2@ci_${CI_JOB}_${CI_BRANCH}"
+rvm use "1.9.2@ci_jobs"  # We'll use the same gemset for all jobs for now.
+
+# install bundler if not yet installed.
+if ! gem list bundler | grep "^bundler "; then
+  gem install bundler --no-rdoc --no-ri
+fi
+
+# Install bundle if dependencies have changed.
+if ! bundle check; then
+  # Shared gems may be faster than deployment flag because they don't need installing.
+  #if ! ( bundle install --local --deployment || bundle install --deployment); then
+  if ! ( bundle install --local || bundle install ); then
+    echo "Gem bundle was not installed correctly."
+    exit 1
+  fi
+fi
+
+# Setup the rails project database.yml
+./setup_database.rb
+
+rake db:create
+rake db:migrate
+rake db:test:prepare
+
+# Finally, run your tests
+
+#rake
+rspec ./spec
