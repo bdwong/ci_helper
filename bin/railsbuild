@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 # Test a rails project.
 
 # default variables
@@ -33,7 +33,7 @@ if ! bundle check; then
 fi
 
 # Setup the rails project database.yml
-./setup_database.rb
+setup_database.rb
 
 rake db:create
 rake db:migrate
