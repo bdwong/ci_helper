@@ -17,7 +17,7 @@ class DatabaseConfigurator
     @options.merge!(@dbinfo || {})
     @options.merge!(options)
     @options['database'] = ci_database_name
-    @config_dir = File.join(options['PROJECT_DIR'], 'config')
+    @config_dir = File.join(options['WORKSPACE']||'.' , 'config')
   end
   
   # The database name may include a wildcard. If so, use build parameters.
