@@ -8,14 +8,15 @@ require File.join(File.dirname(__FILE__), 'write_templated_file')
 # Expect :database, :username, :password
 
 class DatabaseConfigurator
-  def initialize(ymlfile, *options)
+  def initialize(ymlfile, options)
+    options ||= {}
     #dbinfo['database']
     #dbinfo['username']
     #dbinfo['password']
     @dbinfo = YAML.load_file('/var/lib/jenkins/dbinfo.yml')
-    @options = ENV.to_hash || {}
+    @options = ENV.to_hash
     @options.merge!(@dbinfo || {})
-    @options.merge!(options || {})
+    @options.merge!(options)
     @options['database'] = ci_database_name
     @config_dir = File.join(options['PROJECT_DIR'], 'config')
   end
