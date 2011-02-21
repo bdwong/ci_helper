@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #(__FILE__)
 require 'yaml'
-require 'write_templated_file'
+require File.join(File.dirname(__FILE__), 'write_templated_file')
 
 # TODO: Interpolate database credentials
 # source the database credentials.
@@ -13,7 +13,7 @@ class DatabaseConfigurator
     #dbinfo['username']
     #dbinfo['password']
     @dbinfo = YAML.load_file('/var/lib/jenkins/dbinfo.yml')
-    @options = ENV || {}
+    @options = ENV.to_hash || {}
     @options.merge!(@dbinfo || {})
     @options.merge!(options || {})
     @options['database'] = ci_database_name
