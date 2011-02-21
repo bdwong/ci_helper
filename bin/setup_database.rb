@@ -8,8 +8,7 @@ require File.join(File.dirname(__FILE__), 'write_templated_file')
 # Expect :database, :username, :password
 
 class DatabaseConfigurator
-  def initialize(ymlfile, options)
-    options ||= {}
+  def initialize(ymlfile, options={})
     #dbinfo['database']
     #dbinfo['username']
     #dbinfo['password']
