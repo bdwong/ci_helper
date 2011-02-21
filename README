@@ -1,0 +1,2 @@
+This is a set of scripts to help set up and run tests for a Rails project
+on a continuous integration server.
