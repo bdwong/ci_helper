@@ -6,6 +6,8 @@ export PROJECT_DIR=`pwd`
 export CI_BRANCH=${CI_BRANCH:-master}
 export CI_JOB=${CI_JOB:project}
 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
+
 if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
   echo "rvm is not installed correctly."
   exit 1
