@@ -3,9 +3,7 @@
 require 'yaml'
 require File.join(File.dirname(__FILE__), 'write_templated_file')
 
-# TODO: Interpolate database credentials
-# source the database credentials.
-# Expect :database, :username, :password
+# Expect "database", "username", "password" keys from yml file.
 
 class DatabaseConfigurator
   def initialize(ymlfile, options={})
@@ -26,7 +24,8 @@ class DatabaseConfigurator
     ci_branch = @options['CI_BRANCH'] || 'master'
     @dbinfo['database'].gsub(/%/, "#{ci_job}_#{ci_branch}")
   end
-  
+
+  # Take a fugu-style template file and generate a database.yml  
   def interpolate_template_database_config
     app_prefix = @options['APP_PREFIX'] || 'CI'
     t = Templator.new  # The templator includes ENV by default.
@@ -41,6 +40,7 @@ class DatabaseConfigurator
     t.interpolate_files_like("database.yml")
   end
   
+  # Take an existing mysql database.yml file and replace the credentials.
   def interpolate_existing_database_config
     dbinfo = {}
     @dbinfo.find_all()
@@ -56,10 +56,18 @@ class DatabaseConfigurator
       YAML.dump(config, f)
     end
   end
+
+  def interpolate!
+    if File.exists?(File.join(@config_dir, 'database.yml'))
+      interpolate_existing_database_config
+    else
+      interpolate_template_database_config
+    end
+  end
   
 end
 
 if $0 == __FILE__
   c = DatabaseConfigurator.new('/var/lib/jenkins/dbinfo.yml')
-  c.interpolate_template_database_config
+  c.interpolate!
 end
