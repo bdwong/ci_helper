@@ -35,11 +35,18 @@ fi
 # Setup the rails project database.yml
 setup_database.rb
 
-rake db:create
-rake db:migrate
+rake db:reset
+#rake db:create
+#rake db:migrate
 rake db:test:prepare
 
 # Finally, run your tests
 
-#rake
-rspec ./spec
+# Run commands related to ci, if any.
+# Otherwise run regular specs.
+if [[ -n "$1" ]]; then
+  rake $1
+else
+  rake spec
+fi
+
