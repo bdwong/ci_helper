@@ -46,7 +46,7 @@ class DatabaseConfigurator
     @dbinfo.find_all()
     @dbinfo.each_key { |key| dbinfo[key] = @options[key] }
   
-    file=File.join(@config_dir), 'database.yml'
+    file=File.join(@config_dir, 'database.yml')
     config = YAML.load_file(file)
     config.each do |env, settings|
       settings.merge!(dbinfo)
