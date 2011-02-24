@@ -21,12 +21,13 @@ fi
 rvm use "1.9.2@ci_jobs"  # We'll use the same gemset for all jobs for now.
 
 # install bundler if not yet installed.
-if ! gem list bundler | grep "^bundler "; then
+if ! gem query -i -n bundler; then
   gem install bundler --no-rdoc --no-ri
 fi
 
 # Install bundle if dependencies have changed.
 if ! bundle check; then
+  echo "Bundle check failed. Installing bundle."
   # Shared gems may be faster than deployment flag because they don't need installing.
   #if ! ( bundle install --local --deployment || bundle install --deployment); then
   if ! ( bundle install --local || bundle install ); then
@@ -39,21 +40,18 @@ fi
 setup_database.rb
 
 if [[ $CI_DB_PREP == 'reset' ]]; then
-  rake db:reset
+  dbprep_tasks=db:reset db:test:prepare
 else
-  rake db:create
-  rake db:migrate
+  dbprep_tasks=db:create db:migrate db:test:prepare
 fi
-
-rake db:test:prepare
 
 # Finally, run your tests
 
 # Run commands related to ci, if any.
 # Otherwise run regular specs.
 if [[ -n "$1" ]]; then
-  rake $1
+  rake $dbprep_tasks $1
 else
-  rake spec
+  rake $dbprep_tasks spec
 fi
 
