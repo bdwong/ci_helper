@@ -43,7 +43,6 @@ class DatabaseConfigurator
   # Take an existing mysql database.yml file and replace the credentials.
   def interpolate_existing_database_config
     dbinfo = {}
-    @dbinfo.find_all()
     @dbinfo.each_key { |key| dbinfo[key] = @options[key] }
   
     file=File.join(@config_dir, 'database.yml')
