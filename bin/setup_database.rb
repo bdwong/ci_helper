@@ -57,10 +57,10 @@ class DatabaseConfigurator
   end
 
   def interpolate!
-    if File.exists?(File.join(@config_dir, 'database.yml'))
-      interpolate_existing_database_config
-    else
+    if File.exists?(File.join(@config_dir, 'database.yml.tmpl'))
       interpolate_template_database_config
+    else
+      interpolate_existing_database_config
     end
   end
   
