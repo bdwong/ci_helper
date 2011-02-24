@@ -3,8 +3,11 @@
 
 # default variables
 export PROJECT_DIR=`pwd`
-export CI_BRANCH=${CI_BRANCH:-master}
-export CI_JOB=${CI_JOB:project}
+export CI_BRANCH=${NODE_LABELS:-master}
+export CI_JOB=${JOB_NAME:-project}
+
+# Choose 'reset' to load from schema, or 'migrate' to migrate existing database.
+export CI_DB_PREP=${CI_DB_PREP:-reset}
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
 
@@ -35,9 +38,13 @@ fi
 # Setup the rails project database.yml
 setup_database.rb
 
-rake db:reset
-#rake db:create
-#rake db:migrate
+if [[ $CI_DB_PREP == 'reset' ]]; then
+  rake db:reset
+else
+  rake db:create
+  rake db:migrate
+fi
+
 rake db:test:prepare
 
 # Finally, run your tests
