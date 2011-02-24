@@ -40,9 +40,9 @@ fi
 setup_database.rb
 
 if [[ $CI_DB_PREP == 'reset' ]]; then
-  dbprep_tasks=db:reset db:test:prepare
+  dbprep_tasks='db:reset db:test:prepare'
 else
-  dbprep_tasks=db:create db:migrate db:test:prepare
+  dbprep_tasks='db:create db:migrate db:test:prepare'
 fi
 
 # Finally, run your tests
