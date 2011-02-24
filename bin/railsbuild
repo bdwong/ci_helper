@@ -39,11 +39,19 @@ fi
 # Setup the rails project database.yml
 setup_database.rb
 
-if [[ $CI_DB_PREP == 'reset' ]]; then
-  dbprep_tasks='db:reset db:test:prepare'
-else
-  dbprep_tasks='db:create db:migrate db:test:prepare'
-fi
+case ($CI_DB_PREP)
+  reset)
+    rake db:reset  # must be done separately from other tasks.
+    dbprep_tasks='db:test:prepare'
+    ;;
+  migrate)
+    dbprep_tasks='db:create db:migrate db:test:prepare'
+    ;;
+  *)
+    echo "Invalid CI_DB_PREP option. Must be 'reset' or 'migrate'".
+    exit 1;
+    ;;
+esac
 
 # Finally, run your tests
 
