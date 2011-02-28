@@ -60,8 +60,8 @@ esac
 
 # Run commands related to ci, if any.
 # Otherwise run regular specs.
-if [[ -n "$1" ]]; then
-  rake $dbprep_tasks $1
+if [[ -n "$*" ]]; then
+  rake $dbprep_tasks $*
 else
   rake $dbprep_tasks spec
 fi
