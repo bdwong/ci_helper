@@ -5,6 +5,10 @@
 export PROJECT_DIR=`pwd`
 export CI_BRANCH=${NODE_LABELS:-master}
 export CI_JOB=${JOB_NAME:-project}
+export CI_RVM_RUBY=${CI_RVM_RUBY:-"1.9.2"}
+# For now, use the same gemset for all jobs.
+#export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_${CI_JOB}_${CI_BRANCH}"
+#export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_jobs"}
 
 # Choose 'reset' to load from schema, or 'migrate' to migrate existing database.
 export CI_DB_PREP=${CI_DB_PREP:-reset}
@@ -17,8 +21,7 @@ if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
 fi
 
 # Use the correct ruby
-#rvm use "1.9.2@ci_${CI_JOB}_${CI_BRANCH}"
-rvm use "1.9.2@ci_jobs"  # We'll use the same gemset for all jobs for now.
+rvm use $CI_RVM_USE
 
 # install bundler if not yet installed.
 if ! gem query -i -n bundler; then
