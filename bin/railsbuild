@@ -21,19 +21,22 @@ if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
 fi
 
 # Use the correct ruby
-rvm use $CI_RVM_USE
+rvm use "$CI_RVM_USE"
 
 # install bundler if not yet installed.
-if ! gem query -i -n bundler; then
+if ! command -v bundle ; then
   gem install bundler --no-rdoc --no-ri
+  # Set default bundler options to not build documentation.
+  bundle config build --no-rdoc --no-ri
 fi
 
 # Install bundle if dependencies have changed.
 if ! bundle check; then
   echo "Bundle check failed. Installing bundle."
-  # Shared gems may be faster than deployment flag because they don't need installing.
-  #if ! ( bundle install --local --deployment || bundle install --deployment); then
-  if ! ( bundle install --local || bundle install ); then
+  bundle_cmd='bundle install --local || bundle install'
+
+  # Exclusive lock on bundler to make multiprocess safe.
+  if ! flock -x "/var/lock/$CI_RVM_USE" -c "$bundle_cmd" ; then
     echo "Gem bundle was not installed correctly."
     exit 1
   fi
@@ -61,8 +64,11 @@ esac
 # Run commands related to ci, if any.
 # Otherwise run regular specs.
 if [[ -n "$*" ]]; then
-  rake $dbprep_tasks $*
+  rake_cmd="rake $dbprep_tasks $*"
 else
-  rake $dbprep_tasks spec
+  rake_cmd="rake $dbprep_tasks spec"
 fi
+
+# Shared lock on rake task to prevent bundler conflicts with other processes.
+flock -s "/var/lock/$CI_RVM_USE" -c "$rake_cmd"
 
