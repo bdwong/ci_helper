@@ -10,7 +10,7 @@ class DatabaseConfigurator
     #dbinfo['database']
     #dbinfo['username']
     #dbinfo['password']
-    @dbinfo = YAML.load_file('/var/lib/jenkins/dbinfo.yml')
+    @dbinfo = YAML.load_file(ymlfile)
     @options = ENV.to_hash
     @options.merge!(@dbinfo || {})
     @options.merge!(options)
