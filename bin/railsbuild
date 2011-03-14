@@ -13,7 +13,11 @@ export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_jobs"}
 # Choose 'reset' to load from schema, or 'migrate' to migrate existing database.
 export CI_DB_PREP=${CI_DB_PREP:-reset}
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
+# This loads RVM into a shell session.
+# need the '|| true' because it may return a non-zero value.
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  . "$HOME/.rvm/scripts/rvm" || true
+fi
 
 if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
   echo "rvm is not installed correctly."
