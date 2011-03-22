@@ -34,4 +34,4 @@ if ! heroku create $HEROKU_APPNAME; then
 fi
 
 # Push the master branch to heroku.
-git push heroku master
+git push heroku master -f
