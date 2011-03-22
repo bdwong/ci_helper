@@ -25,12 +25,13 @@ heroku keys:add
 
 # Create the app if it does not exist. Note this does not push anything.
 if ! heroku create $HEROKU_APPNAME; then
-  # If it does exist, just add the remote.
-  if ! ( git remote|grep '^heroku$' ) then
-    git remote add heroku "git@heroku.com:$HEROKU_APPNAME.git"
+  # Unconditionally remove the remote since it may have changed.
+  if ( git remote|grep '^heroku$' ) then
+    git remote rm heroku
   fi
+  # Add the remote.
+  git remote add heroku "git@heroku.com:$HEROKU_APPNAME.git"
 fi
 
 # Push the master branch to heroku.
 git push heroku master
-
