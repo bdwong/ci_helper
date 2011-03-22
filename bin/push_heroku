@@ -1,7 +1,10 @@
 #!/bin/bash -e
 # This is a ci_helper script to set up an existing heroku account
 # and push to it.
-# export HEROKU_APPNAME, HEROKU_LOGIN, HEROKU_API_KEY
+# Prerequisites: the ~/.ssh/known_hosts file should already contain
+# the public keys of the heroku server.
+# Environment variables:
+#   HEROKU_APPNAME, HEROKU_LOGIN, HEROKU_API_KEY
 HEROKU_APPNAME=${1:-HEROKU_APPNAME}
 if [[ -z $HEROKU_LOGIN ]]; then
   echo "HEROKU_LOGIN required"
