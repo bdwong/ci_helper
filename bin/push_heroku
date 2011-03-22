@@ -1,0 +1,45 @@
+#!/bin/bash -e
+# This is a ci_helper script to set up an existing heroku account
+# and push to it.
+# export HEROKU_APPNAME, HEROKU_LOGIN, HEROKU_API_KEY
+HEROKU_APPNAME=${1:-HEROKU_APPNAME}
+if [[ -z $HEROKU_LOGIN ]]; then
+  echo "HEROKU_LOGIN required"
+  exit 1
+fi
+if [[ -z $HEROKU_API_KEY ]]; then
+  echo "HEROKU_API_KEY required"
+  exit 1
+fi
+
+# Login to the heroku account for the first time.
+# Requires username, password
+# and 'y' to push ssh public key to heroku if logging in for the first time.
+#heroku login <<EOF
+#$HEROKU_LOGIN
+#$HEROKU_PASSWORD
+#y
+#EOF
+
+# Use a heroku API key instead of logging in. (more secure)
+mkdir -p ~/.heroku
+cat <<EOF >~/.heroku/credentials
+$HEROKU_LOGIN
+$HEROKU_API_KEY
+EOF
+chmod 600 ~/.heroku/credentials
+
+# Add public key if necessary
+heroku keys:add
+
+# Create the app if it does not exist. Note this does not push anything.
+if ! heroku create $HEROKU_APPNAME; then
+  # If it does exist, just add the remote.
+  if ! ( git remote|grep '^heroku$' ) then
+    git remote add heroku "git@heroku.com:$HEROKU_APPNAME.git"
+  fi
+fi
+
+# Push the master branch to heroku.
+git push heroku master
+
