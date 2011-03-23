@@ -38,3 +38,5 @@ fi
 
 # Push the master branch to heroku.
 git push heroku master -f
+# reset the database in case the schema has changed.
+heroku rake db:reset
