@@ -37,6 +37,6 @@ if ! heroku create $HEROKU_APPNAME; then
 fi
 
 # Push the master branch to heroku.
-git push heroku master -f
+git push heroku origin/master:master -f
 # reset the database in case the schema has changed.
 heroku rake db:reset
