@@ -15,6 +15,18 @@ if [[ -z $HEROKU_API_KEY ]]; then
   exit 1
 fi
 
+# Since heroku is a gem, make sure RVM is loaded.
+# This loads RVM into a shell session.
+# need the '|| true' because it may return a non-zero value.
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  . "$HOME/.rvm/scripts/rvm" || true
+fi
+
+if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
+  echo "rvm is not installed correctly."
+  exit 1
+fi
+
 # Use a heroku API key instead of logging in. (more secure)
 mkdir -p ~/.heroku
 cat <<EOF >~/.heroku/credentials
