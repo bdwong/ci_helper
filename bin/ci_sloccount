@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if ! which sloccount; then
+  echo ERROR: sloccount is not installed.
+  exit 1
+fi
+
+mkdir -p sloccount
+sloccount --duplicates --wide --details --datadir sloccount -- app lib spec test >sloccount.sc
