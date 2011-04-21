@@ -34,6 +34,11 @@ fi
 # Debug.
 rvm current
 
+if ! gem list|grep heroku; then
+  echo "Installing Heroku"
+  gem install heroku
+fi
+
 # Use a heroku API key instead of logging in. (more secure)
 mkdir -p ~/.heroku
 cat <<EOF >~/.heroku/credentials
