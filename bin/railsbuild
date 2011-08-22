@@ -65,8 +65,10 @@ case $CI_DB_PREP in
   migrate)
     dbprep_tasks='db:create db:migrate db:test:prepare'
     ;;
+  custom)
+    dbprep_tasks=''
   *)
-    echo "Invalid CI_DB_PREP option. Must be 'reset' or 'migrate'".
+    echo "Invalid CI_DB_PREP option. Must be 'reset', 'migrate', or 'custom'".
     exit 1;
     ;;
 esac
