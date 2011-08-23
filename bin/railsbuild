@@ -67,6 +67,7 @@ case $CI_DB_PREP in
     ;;
   custom)
     dbprep_tasks=''
+    ;;
   *)
     echo "Invalid CI_DB_PREP option. Must be 'reset', 'migrate', or 'custom'".
     exit 1;
