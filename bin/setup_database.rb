@@ -25,7 +25,9 @@ class DatabaseConfigurator
     @dbinfo['database'].gsub(/%/, "#{ci_job}_#{ci_branch}")
   end
 
-  # Take a fugu-style template file and generate a database.yml  
+  # Take a fugu-style template file and generate a database.yml
+  # Remember that the parameters are expected in the format:
+  # @@APP_PREFIX_DB_NAME@@
   def interpolate_template_database_config
     app_prefix = @options['APP_PREFIX'] || 'CI'
     t = Templator.new  # The templator includes ENV by default.
