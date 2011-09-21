@@ -84,6 +84,11 @@ else
   rake_cmd="rake $dbprep_tasks spec"
 fi
 
+# Filter output throught a pipe if CI_FILTER is defined.
+if [[ -n "$CI_FILTER_CMD" ]]; then
+  rake_cmd="$rake_cmd | $CI_FILTER_CMD"
+fi
+
 # Shared lock on rake task to prevent bundler conflicts with other processes.
 flock -s "/var/lock/$CI_RVM_USE" -c "$rake_cmd"
 
