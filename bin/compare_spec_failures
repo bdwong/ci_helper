@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+# Take input on stdin to find the rspec summary line with the following format:
+#   5584 examples, 128 failures, 28 pending
+#
+# Echo input to output.
+# Compare the failure count with previous count stored in @filename
+# Pass if the failure count is less than or equal to the previous count
+# Also overwrite the previous count with the current count if it is lower.
+
+class CompareSpecFailures
+  def initialize
+    @filename = "../expected_failures"
+  end
+
+  def expected_failures
+    return @expected_failures if @expected_failures
+    return nil if not File.exists?(@filename)
+    @expected_failures = File.read(@filename).to_i
+  end
+  
+  def actual_failures
+    return @actual_failures if @actual_failures
+    STDIN.each do |s|
+      matches = s.match(/[\d]+ examples, ([\d]+) failures/)
+      @actual_failures ||= matches[1].to_i if matches
+      STDOUT.puts s
+    end
+    return @actual_failures unless @actual_failures.nil?
+    raise Exception.new("Couldn't find actual failure count in input stream")
+  end
+  
+  def record_failure_count
+    File.open(@filename, "w+") do |f|
+      f.puts actual_failures
+    end
+  end
+  
+  def compare_failure_count
+    if expected_failures
+      case actual_failures <=> expected_failures
+      when -1
+        puts "Expected #{expected_failures} failures <  actual #{actual_failures} failures. Changing expectation to #{actual_failures}."
+        record_failure_count
+      when 0
+        puts "Expected #{expected_failures} failures == actual #{actual_failures} failures. Pass."
+      when 1
+        abort "Expected at most #{expected_failures} failures, actual #{actual_failures} failures. Aborting."
+      end
+    else
+      puts "Expected failures not initialized. Initializing expectation to actual #{actual_failures}."
+      record_failure_count
+    end
+  end
+end
+
+c = CompareSpecFailures.new
+c.compare_failure_count
