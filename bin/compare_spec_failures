@@ -37,6 +37,7 @@ class CompareSpecFailures
   end
   
   def compare_failure_count
+    puts #empty line
     if expected_failures
       case actual_failures <=> expected_failures
       when -1
@@ -45,8 +46,9 @@ class CompareSpecFailures
       when 0
         puts "Expected #{expected_failures} failures == actual #{actual_failures} failures. Pass."
       when 1
-        puts "Expected at most #{expected_failures} failures, actual #{actual_failures} failures. Aborting."
-        abort
+        puts "Expected at most #{expected_failures} failures, actual #{actual_failures} failures. Aborting (***UNSTABLE***)"
+        #abort
+        # Rely on the Task Scanner plugin to mark the build as unstable.
       end
     else
       puts "Expected failures not initialized. Initializing expectation to actual #{actual_failures}."
