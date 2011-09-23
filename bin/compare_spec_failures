@@ -45,7 +45,8 @@ class CompareSpecFailures
       when 0
         puts "Expected #{expected_failures} failures == actual #{actual_failures} failures. Pass."
       when 1
-        abort "Expected at most #{expected_failures} failures, actual #{actual_failures} failures. Aborting."
+        puts "Expected at most #{expected_failures} failures, actual #{actual_failures} failures. Aborting."
+        abort
       end
     else
       puts "Expected failures not initialized. Initializing expectation to actual #{actual_failures}."
