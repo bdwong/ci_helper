@@ -13,6 +13,9 @@ export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_jobs"}
 # Choose 'reset' to load from schema, or 'migrate' to migrate existing database.
 export CI_DB_PREP=${CI_DB_PREP:-reset}
 
+# Make the project pristine so that old cache files, log files, etc are removed.
+git clean -fdx
+
 # Determine the rvm directory because it changed.
 if [[ -d $HOME/rvm ]]; then
   RVM_DIR=$HOME/rvm
