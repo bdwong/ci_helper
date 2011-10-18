@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+require 'nokogiri'
+
+File.open(ARGV[0]) do |f|
+  width = Hash.new(0)
+  
+  # Determine column widths.
+  doc = Nokogiri::HTML(f)
+  doc.xpath('//table//tr').each do |row|
+    row.xpath('td').each_with_index do |cell,i|
+      width[i] = cell.text.size if width[i] < cell.text.size
+    end
+  end
+  # and again, but this time print with fixed column width.
+  doc.xpath('//table//tr').each do |row|
+    print "|"
+    row.xpath('td').each_with_index do |cell,i|
+      print "%#{width[i]}s |" % cell.text
+    end
+    print "\n"
+  end
+end
