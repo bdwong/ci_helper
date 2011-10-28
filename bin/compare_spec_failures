@@ -21,12 +21,17 @@ class CompareSpecFailures
   
   def actual_failures
     return @actual_failures if @actual_failures
+    stats=[]
     STDIN.each do |s|
-      matches = s.match(/[\d]+ example(?:s), ([\d]+) failure(?:s)/)
-      @actual_failures ||= matches[1].to_i if matches
+      matches = s.match(/([\d]+) example(?:s), ([\d]+) failure(?:s)(?:, ([\d]+) pending)/)
+      if matches
+        stats << [matches[1].to_i, matches[2].to_i, matches[3].to_i]
       STDOUT.puts s
     end
-    return @actual_failures unless @actual_failures.nil?
+    # Sum the statistics
+    totals = stats.transpose.map {|x| x.reduce(:+)}
+    @actual_failures = totals[1]
+    return @actual_failures unless stats.count==0
     raise Exception.new("Couldn't find actual failure count in input stream")
   end
   
