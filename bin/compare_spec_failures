@@ -22,7 +22,7 @@ class CompareSpecFailures
   def actual_failures
     return @actual_failures if @actual_failures
     STDIN.each do |s|
-      matches = s.match(/[\d]+ examples, ([\d]+) failures/)
+      matches = s.match(/[\d]+ example(?:s), ([\d]+) failure(?:s)/)
       @actual_failures ||= matches[1].to_i if matches
       STDOUT.puts s
     end
