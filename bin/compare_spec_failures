@@ -20,7 +20,7 @@ class CompareSpecFailures
   end
   
   def actual_failures
-    @actual_failures = SpecStats.new.totals[:failures] if @actual_failures.nil?
+    @actual_failures = SpecStatsFilter.new.totals[:failures] if @actual_failures.nil?
     @actual_failures
   end
   
@@ -51,7 +51,7 @@ class CompareSpecFailures
   end
 end
 
-class SpecStats
+class SpecStatsFilter
   attr_reader :stats, :totals
   
   def initialize(input=STDIN, output=STDOUT)
