@@ -20,19 +20,8 @@ class CompareSpecFailures
   end
   
   def actual_failures
-    return @actual_failures if @actual_failures
-    stats=[]
-    STDIN.each do |s|
-      matches = s.match(/([\d]+) example(?:s), ([\d]+) failure(?:s)(?:, ([\d]+) pending)/)
-      if matches
-        stats << [matches[1].to_i, matches[2].to_i, matches[3].to_i]
-      STDOUT.puts s
-    end
-    # Sum the statistics
-    totals = stats.transpose.map {|x| x.reduce(:+)}
-    @actual_failures = totals[1]
-    return @actual_failures unless stats.count==0
-    raise Exception.new("Couldn't find actual failure count in input stream")
+    @actual_failures = SpecStats.new.totals[1] if @actual_failures.nil?
+    @actual_failures
   end
   
   def record_failure_count
@@ -59,6 +48,26 @@ class CompareSpecFailures
       puts "Expected failures not initialized. Initializing expectation to actual #{actual_failures}."
       record_failure_count
     end
+  end
+end
+
+class SpecStats
+  attr_reader :stats, :totals
+  
+  def initialize(input=STDIN, output=STDOUT)
+    @stats=[]
+    input.each do |s|
+      matches = s.match(/([\d]+) example(?:s?), ([\d]+) failure(?:s?)(?:, ([\d]+) pending)/)
+      if matches
+        @stats << [matches[1].to_i, matches[2].to_i, matches[3].to_i]
+      end
+      output.puts s
+    end
+    if @stats.empty?
+      raise RuntimeError.new("Couldn't find actual failure count in input stream") 
+    end
+    # Sum the statistics
+    @totals = @stats.transpose.map {|x| x.reduce(:+)}
   end
 end
 
