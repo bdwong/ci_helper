@@ -1,0 +1,15 @@
+# Don't match the following:
+
+1 , 0 , 1 pending
+
+
+# Match the following:
+
+Finished in 1611.24 seconds
+7902 examples, 2 failures, 71 pending
+
+Finished in 0.19 seconds
+15 examples, 1 failure, 2 pending
+
+Finished in 0.00 seconds
+1 example, 1 failure
