@@ -20,7 +20,7 @@ class CompareSpecFailures
   end
   
   def actual_failures
-    @actual_failures = SpecStats.new.totals[1] if @actual_failures.nil?
+    @actual_failures = SpecStats.new.totals[:failures] if @actual_failures.nil?
     @actual_failures
   end
   
@@ -59,7 +59,11 @@ class SpecStats
     input.each do |s|
       matches = s.match(/([\d]+) example(?:s?), ([\d]+) failure(?:s?)(?:, ([\d]+) pending)/)
       if matches
-        @stats << [matches[1].to_i, matches[2].to_i, matches[3].to_i]
+        @stats << {
+          :examples => matches[1].to_i,
+          :failures => matches[2].to_i,
+          :pending => matches[3].to_i
+          }
       end
       output.puts s
     end
@@ -67,7 +71,10 @@ class SpecStats
       raise RuntimeError.new("Couldn't find actual failure count in input stream") 
     end
     # Sum the statistics
-    @totals = @stats.transpose.map {|x| x.reduce(:+)}
+    @totals = @stats.reduce do |total, one|
+      one.each {|key, value| total[key] = total[key].to_i + value}
+      total
+    end
   end
 end
 
