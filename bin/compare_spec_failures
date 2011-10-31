@@ -65,6 +65,7 @@ class SpecStats
           :pending => matches[3].to_i
           }
       end
+      # Echo input to output
       output.puts s
     end
     if @stats.empty?
