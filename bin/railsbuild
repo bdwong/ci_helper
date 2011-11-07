@@ -62,7 +62,7 @@ setup_database.rb
 
 case $CI_DB_PREP in
   reset)
-    rake db:reset  # must be done separately from other tasks.
+    bundle exec rake db:reset  # must be done separately from other tasks.
     dbprep_tasks='db:test:prepare'
     ;;
   migrate)
