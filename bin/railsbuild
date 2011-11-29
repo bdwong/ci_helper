@@ -82,9 +82,9 @@ esac
 # Run commands related to ci, if any.
 # Otherwise run regular specs.
 if [[ -n "$*" ]]; then
-  rake_cmd="bundle exec rake $dbprep_tasks $*"
+  rake_cmd="bundle exec rake --trace $dbprep_tasks $*"
 else
-  rake_cmd="bundle exec rake $dbprep_tasks spec"
+  rake_cmd="bundle exec rake --trace $dbprep_tasks spec"
 fi
 
 # Filter output throught a pipe if CI_FILTER is defined.
