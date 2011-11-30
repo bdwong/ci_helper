@@ -1,0 +1,10 @@
+#!/bin/bash
+# screenshot
+echo "Saving screenshot to $1"
+cp /var/tmp/Xvfb_screen0 /tmp/screenshot
+if [[ -z "$SCREENSHOT_DIR" ]]; then
+  convert /tmp/screenshot $1
+else
+  convert /tmp/screenshot $SCREENSHOT_DIR/$1
+fi
+rm /tmp/screenshot
