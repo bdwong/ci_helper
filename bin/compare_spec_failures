@@ -20,7 +20,7 @@ class CompareSpecFailures
   end
   
   def actual_failures
-    @actual_failures = SpecStatsFilter.new.totals[:failures] if @actual_failures.nil?
+    @actual_failures = SpecStatsFilter.new.stats.first[:failures] if @actual_failures.nil?
     @actual_failures
   end
   
