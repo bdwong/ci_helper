@@ -3,7 +3,7 @@
 
 # default variables
 export PROJECT_DIR=`pwd`
-export CI_BRANCH=${CVS_BRANCH:-master}
+export CI_BRANCH=${GIT_BRANCH:-${CVS_BRANCH:-master}}
 export CI_JOB=${JOB_NAME:-project}
 export CI_RVM_RUBY=${CI_RVM_RUBY:-"1.9.2"}
 # For now, use the same gemset for all jobs.
