@@ -3,7 +3,7 @@
 
 # default variables
 export PROJECT_DIR=`pwd`
-export CI_BRANCH=${NODE_LABELS:-master}
+export CI_BRANCH=${CVS_BRANCH:-master}
 export CI_JOB=${JOB_NAME:-project}
 export CI_RVM_RUBY=${CI_RVM_RUBY:-"1.9.2"}
 # For now, use the same gemset for all jobs.
@@ -12,6 +12,9 @@ export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_jobs"}
 
 # Choose 'reset' to load from schema, or 'migrate' to migrate existing database.
 export CI_DB_PREP=${CI_DB_PREP:-reset}
+
+# show environment variables.
+env
 
 # Make the project pristine so that old cache files, log files, etc are removed.
 git clean -fdx
