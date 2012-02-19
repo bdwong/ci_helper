@@ -1,71 +1,23 @@
 #!/bin/bash -e
 # Test a rails project.
 
-# default variables
-export PROJECT_DIR=`pwd`
-export CI_BRANCH=${GIT_BRANCH:-${CVS_BRANCH:-master}}
-export CI_JOB=${JOB_NAME:-project}
-export CI_RVM_RUBY=${CI_RVM_RUBY:-"1.9.2"}
-# For now, use the same gemset for all jobs.
-#export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_${CI_JOB}_${CI_BRANCH}"
-export CI_RVM_USE=${CI_RVM_USE:-"$CI_RVM_RUBY@ci_jobs"}
-
-# Choose 'reset' to load from schema, or 'migrate' to migrate existing database.
-export CI_DB_PREP=${CI_DB_PREP:-reset}
-
-# show environment variables.
-env
+source `which ci_functions`
+setup_ci_variables
+env 
 
 # Make the project pristine so that old cache files, log files, etc are removed.
 git clean -fdx
 
-# Determine the rvm directory because it changed.
-if [[ -d $HOME/rvm ]]; then
-  RVM_DIR=$HOME/rvm
-else
-  RVM_DIR=$HOME/.rvm
-fi
-export RVM_DIR
-
-# This loads RVM into a shell session.
-# need the '|| true' because it may return a non-zero value.
-if [[ -s "$RVM_DIR/scripts/rvm" ]]; then
-  . "$RVM_DIR/scripts/rvm" || true
-fi
-
-if ! [[ `type rvm | head -1` == "rvm is a function" ]]; then
-  echo "rvm is not installed correctly."
-  exit 1
-fi
-
-# Use the correct ruby
+load_rvm || exit 1
 rvm use "$CI_RVM_USE"
-
-# install bundler if not yet installed.
-if ! command -v bundle ; then
-  gem install bundler --no-rdoc --no-ri
-  # Set default bundler options to not build documentation.
-  bundle config build --no-rdoc --no-ri
-fi
-
-# Install bundle if dependencies have changed.
-if ! bundle check; then
-  echo "Bundle check failed. Installing bundle."
-  bundle_cmd='bundle install --local || bundle install'
-
-  # Exclusive lock on bundler to make multiprocess safe.
-  if ! flock -x "/var/lock/$CI_RVM_USE" -c "$bundle_cmd" ; then
-    echo "Gem bundle was not installed correctly."
-    exit 1
-  fi
-fi
+bundle_install || exit 1
 
 # Setup the rails project database.yml
 setup_database.rb
 
 case $CI_DB_PREP in
   reset)
-    bundle exec rake db:reset  # must be done separately from other tasks.
+    using_bundler "rake db:reset"  # must be done separately from other tasks.
     dbprep_tasks='db:test:prepare'
     ;;
   migrate)
@@ -80,14 +32,12 @@ case $CI_DB_PREP in
     ;;
 esac
 
-# Finally, run your tests
-
 # Run commands related to ci, if any.
 # Otherwise run regular specs.
 if [[ -n "$*" ]]; then
-  rake_cmd="bundle exec rake --trace $dbprep_tasks $*"
+  rake_cmd="rake --trace $dbprep_tasks $*"
 else
-  rake_cmd="bundle exec rake --trace $dbprep_tasks spec"
+  rake_cmd="rake --trace $dbprep_tasks spec"
 fi
 
 # Filter output throught a pipe if CI_FILTER is defined.
@@ -95,6 +45,4 @@ if [[ -n "$CI_FILTER_CMD" ]]; then
   rake_cmd="$rake_cmd | $CI_FILTER_CMD"
 fi
 
-# Shared lock on rake task to prevent bundler conflicts with other processes.
-flock -s "/var/lock/$CI_RVM_USE" -c "$rake_cmd"
-
+using_bundler "$rake_cmd"
