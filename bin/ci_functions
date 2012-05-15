@@ -61,3 +61,16 @@ using_bundler(){
 	# Shared lock on gemset to prevent bundler conflicts with other processes.
 	flock -s "/var/lock/$CI_RVM_USE" -c "bundle exec $*"	
 }
+
+using_gemset(){
+	# Shared lock on gemset to prevent bundler conflicts with other processes.
+	flock -s "/var/lock/$CI_RVM_USE" -c "$*"	
+}
+
+sed-i(){
+  if [ "`uname`" == "Darwin" ]; then
+	  sed -i '' $*
+	else
+	  sed -i'' $*
+	fi
+}
