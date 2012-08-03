@@ -35,7 +35,8 @@ class DatabaseConfigurator
     t.with_options( {
                       "#{app_prefix}_DB_NAME" => @options['database'],
                       "#{app_prefix}_DB_USER" => @options['username'],
-                      "#{app_prefix}_DB_PASSWORD" => @options['password']
+                      "#{app_prefix}_DB_PASSWORD" => @options['password'],
+                      "DB_HOSTNAME" => @options['host']
                     } )
     t.with_directory(@config_dir)
     
